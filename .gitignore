@@ -24,7 +24,6 @@ Thumbs.db
 *.swo
 
 # Bun
-bun.lock
 
 # Local config
 .mcp.json

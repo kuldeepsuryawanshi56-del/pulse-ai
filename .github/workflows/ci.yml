@@ -23,7 +23,7 @@ concurrency:
 jobs:
   check:
     name: Lint, Typecheck & Test
-    runs-on: [self-hosted, linux, x64]
+    runs-on: ubuntu-latest
 
     services:
       postgres:

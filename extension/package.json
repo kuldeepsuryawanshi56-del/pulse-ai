@@ -7,7 +7,7 @@
 	"license": "SEE LICENSE IN LICENSE",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/glieai/pulse"
+		"url": "https://github.com/glieai/pulse-ai"
 	},
 	"homepage": "https://pulse.glie.ai",
 	"icon": "resources/icon.png",

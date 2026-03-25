@@ -7,9 +7,11 @@ Thanks for your interest in contributing to Pulse! This document covers the proc
 1. Fork the repository
 2. Clone your fork: `git clone https://github.com/YOUR_USERNAME/pulse-ai`
 3. Install dependencies: `bun install`
-4. Start the database: `docker compose up db -d`
-5. Run migrations: `cd api && bun run migrate`
-6. Start development: `bun run --filter './api' dev` and `bun run --filter './web' dev`
+4. Copy env: `cp .env.example .env`
+5. Start the database: `docker compose up db -d`
+6. Run migrations: `cd api && bun run migrate`
+7. Start API: `cd api && bun run dev`
+8. Start Web (separate terminal): `cd web && bun run dev`
 
 ## Development Stack
 

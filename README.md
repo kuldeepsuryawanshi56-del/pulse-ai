@@ -36,10 +36,11 @@ Pulse is a self-hosted knowledge base that fills itself. It watches your AI codi
 
 ```bash
 git clone https://github.com/glieai/pulse-ai && cd pulse-ai
+cp .env.example .env
 docker compose up -d
 ```
 
-That's it. Pulse is running at `http://localhost:5173`.
+That's it. Pulse is running at `http://localhost:5173` — no login required in solo mode.
 
 ### VS Code Extension
 
@@ -124,12 +125,17 @@ bun install
 # Start database
 docker compose up db -d
 
-# Run migrations
-cd api && bun run migrate
+# Setup
+cp .env.example .env
 
-# Start API + Web
-bun run --filter './api' dev &
-bun run --filter './web' dev
+# Run migrations
+cd api && bun run migrate && cd ..
+
+# Start API (terminal 1)
+cd api && bun run dev
+
+# Start Web (terminal 2)
+cd web && bun run dev
 ```
 
 ## MCP Tools

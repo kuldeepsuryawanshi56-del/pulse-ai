@@ -2,8 +2,8 @@ import { apiGet } from "$lib/api";
 import { redirect } from "@sveltejs/kit";
 import type { LayoutServerLoad } from "./$types";
 
-const PUBLIC_ROUTES = ["/", "/login", "/register", "/pricing", "/forgot-password"];
-const PUBLIC_PREFIXES = ["/reset-password/", "/invite/", "/auth/"];
+const PUBLIC_ROUTES = ["/", "/login", "/register", "/forgot-password"];
+const PUBLIC_PREFIXES = ["/reset-password/", "/auth/"];
 
 function isPublicRoute(pathname: string): boolean {
 	return PUBLIC_ROUTES.includes(pathname) || PUBLIC_PREFIXES.some((p) => pathname.startsWith(p));
