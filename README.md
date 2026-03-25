@@ -32,44 +32,31 @@ Pulse is a self-hosted knowledge base that fills itself. It watches your AI codi
 
 ## Quick Start
 
-### Docker (recommended)
+### 1. Start the server
 
 ```bash
-# Download the compose file
 curl -fsSL https://raw.githubusercontent.com/glieai/pulse-ai/main/docker-compose.yml -o docker-compose.yml
-
-# Start Pulse
 docker compose up -d
 ```
 
-That's it. Pulse is running at `http://localhost:5173` — no login required in solo mode.
+Pulse is running at `http://localhost:5173` — no login required in solo mode. Pre-built images, no build step.
 
-Pre-built images are pulled from GitHub Container Registry. No build step, no dependencies.
+### 2. Connect your tools
 
-### VS Code Extension
+Choose how you work:
 
-Install [Pulse AI](https://marketplace.visualstudio.com/items?itemName=glie.pulse-ai) from the VS Code Marketplace:
+**VS Code** — Install [Pulse AI](https://marketplace.visualstudio.com/items?itemName=glie.pulse-ai) from the Marketplace. Set API URL → `http://localhost:3000`. Done — MCP and watcher are configured automatically.
 
-1. Open Extensions (`Ctrl+Shift+X`) → search **Pulse AI**
-2. Set API URL → `http://localhost:3000`
-3. Click **▶ Pulse** in the status bar to start the watcher
-
-### CLI
+**Terminal** — No VS Code needed:
 
 ```bash
-npx @glie/pulse-cli init
-pulse watch
+npx @glie/pulse-cli init    # configures MCP for Claude Code + Codex
+pulse watch                  # starts capturing insights
 ```
 
-### MCP (Claude Code / Codex)
+### 3. Code as usual
 
-The VS Code extension auto-configures MCP. For terminal-only setups:
-
-```bash
-npx @glie/pulse-cli init  # configures ~/.claude/.mcp.json and ~/.codex/config.toml
-```
-
-Your AI agent now has access to `pulse_search`, `pulse_context`, `pulse_create`, and more.
+Your next commit or AI session generates the first insight. Your AI agents (Claude Code, Codex) now query your knowledge base automatically via MCP.
 
 ## How It Works
 

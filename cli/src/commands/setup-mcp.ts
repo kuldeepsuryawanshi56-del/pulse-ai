@@ -18,7 +18,6 @@ interface McpConfig {
 const HOME = homedir();
 const CLAUDE_DIR = join(HOME, ".claude");
 const MCP_JSON_PATH = join(CLAUDE_DIR, ".mcp.json");
-const SETTINGS_JSON_PATH = join(CLAUDE_DIR, "settings.json");
 const CODEX_DIR = join(HOME, ".codex");
 const CODEX_CONFIG_PATH = join(CODEX_DIR, "config.toml");
 
@@ -49,25 +48,13 @@ function setupClaudeCode(normalizedUrl: string, token: string): void {
 	mcpConfig.mcpServers.pulse = {
 		type: "stdio",
 		command: "npx",
-		args: ["-y", "@glie/pulse-mcp"],
+		args: ["-y", "@glie/pulse-mcp@latest"],
 		env: {
 			PULSE_API_URL: normalizedUrl,
-			PULSE_API_TOKEN: "${PULSE_API_TOKEN}",
+			PULSE_API_TOKEN: token,
 		},
 	};
 	writeFileSync(MCP_JSON_PATH, `${JSON.stringify(mcpConfig, null, "\t")}\n`);
-
-	// settings.json — PULSE_API_TOKEN env
-	let settings: Record<string, unknown> = {};
-	if (existsSync(SETTINGS_JSON_PATH)) {
-		try {
-			settings = JSON.parse(readFileSync(SETTINGS_JSON_PATH, "utf-8"));
-		} catch {}
-	}
-	const env = (settings.env as Record<string, string>) ?? {};
-	env.PULSE_API_TOKEN = token;
-	settings.env = env;
-	writeFileSync(SETTINGS_JSON_PATH, `${JSON.stringify(settings, null, "  ")}\n`);
 }
 
 /**
@@ -109,11 +96,40 @@ function setupCodex(normalizedUrl: string, token: string): void {
 }
 
 /**
- * Configure Pulse MCP server globally for both Claude Code and Codex.
- * Safe to call multiple times — only writes if config is missing or outdated.
+ * Create a local .mcp.json in the current working directory.
+ * Claude Code reads local .mcp.json reliably per-folder.
+ */
+function setupLocalMcp(normalizedUrl: string, token: string): void {
+	const localPath = join(process.cwd(), ".mcp.json");
+	let mcpConfig: McpConfig = { mcpServers: {} };
+	if (existsSync(localPath)) {
+		try {
+			mcpConfig = JSON.parse(readFileSync(localPath, "utf-8"));
+		} catch {}
+	}
+
+	mcpConfig.mcpServers.pulse = {
+		type: "stdio",
+		command: "npx",
+		args: ["-y", "@glie/pulse-mcp@latest"],
+		env: {
+			PULSE_API_URL: normalizedUrl,
+			PULSE_API_TOKEN: token,
+		},
+	};
+	writeFileSync(localPath, `${JSON.stringify(mcpConfig, null, "\t")}\n`);
+}
+
+/**
+ * Configure Pulse MCP server for Claude Code and Codex.
+ * Creates both local .mcp.json and global configs.
  */
 export function setupGlobalMcp(apiUrl: string, token: string): boolean {
 	const normalizedUrl = normalizeApiUrl(apiUrl);
+
+	try {
+		setupLocalMcp(normalizedUrl, token);
+	} catch {}
 
 	try {
 		setupClaudeCode(normalizedUrl, token);
