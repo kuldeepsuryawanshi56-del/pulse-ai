@@ -38,62 +38,27 @@ export async function initCommand(_args: string[]): Promise<void> {
 		}
 	}
 
-	const solo = isSoloMode();
+	// 1. Mode
+	const solo = isSoloMode() || !(await confirm("Connecting to a team server?", true));
 
-	// 1. API URL
-	const apiUrl = await ask("API URL", defaults.apiUrl);
+	// 2. API URL
+	const defaultUrl = solo ? "http://localhost:3000" : "https://pulse.glie.ai";
+	const apiUrl = await ask("API URL", defaultUrl);
 
 	let apiToken: string | undefined;
 
 	if (solo) {
 		info("Solo mode — no authentication required");
 	} else {
-		const hasToken = await confirm("Already have an API token?", true);
-
-		if (hasToken) {
-			// Paste existing token (generated in dashboard → Account → API Tokens)
-			const token = await ask("API Token");
-			if (!token || !token.startsWith("pulse_")) {
-				error("Invalid token. Generate one at your Pulse dashboard → Account → API Tokens.");
-				closePrompt();
-				process.exit(1);
-			}
-			apiToken = token;
-			success("Token accepted");
-		} else {
-			// Login flow — authenticate and create a new token
-			info("Login to create an API token");
-			const email = await ask("Email");
-			const password = await askPassword("Password");
-
-			let jwt: string;
-			try {
-				const result = await apiPost<{ token: string }>(apiUrl, "/auth/login", {
-					email,
-					password,
-				});
-				jwt = result.token;
-				success("Authenticated");
-			} catch (err) {
-				if (err instanceof ApiError) {
-					error(`Login failed: ${err.message}`);
-				} else {
-					error("Could not connect to API. Is the server running?");
-				}
-				closePrompt();
-				process.exit(1);
-			}
-
-			try {
-				const result = await apiPost<{ token: string }>(apiUrl, "/auth/token", {}, jwt);
-				apiToken = result.token;
-				success("API token created");
-			} catch (err) {
-				error(`Failed to create API token: ${err instanceof Error ? err.message : "unknown"}`);
-				closePrompt();
-				process.exit(1);
-			}
+		info("Paste your API token (generate at Dashboard → Account → API Tokens)");
+		const token = await ask("API Token");
+		if (!token || !token.startsWith("pulse_")) {
+			error("Invalid token. Must start with pulse_");
+			closePrompt();
+			process.exit(1);
 		}
+		apiToken = token;
+		success("Token accepted");
 	}
 
 	// 5. Detect repo
