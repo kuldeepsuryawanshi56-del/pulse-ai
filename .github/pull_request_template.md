@@ -1,28 +1,22 @@
-## O que muda
+## What changed
 
-<!-- Resumo claro do que foi feito e porquê -->
+<!-- Clear summary of what was done and why -->
 
-## Tipo
+## Type
 
-- [ ] `feat` — Nova feature
+- [ ] `feat` — New feature
 - [ ] `fix` — Bug fix
 - [ ] `refactor` — Refactoring
-- [ ] `test` — Testes
-- [ ] `docs` — Documentação
+- [ ] `test` — Tests
+- [ ] `docs` — Documentation
 - [ ] `chore` — Tooling, config, CI
 
-## Milestone
+## Checklist
 
-<!-- Que milestone do ROADMAP.md isto avança? Ex: "Fase 0 — Milestone 0.1" -->
+- [ ] Code follows project conventions
+- [ ] Tests pass (`bun test`)
+- [ ] Linting passes (`bun run lint`)
 
-## Definition of Done
+## Notes
 
-- [ ] Padrões seguidos, sem shortcuts
-- [ ] Testes reais (não token)
-- [ ] CI verde
-- [ ] CHANGELOG.md actualizado
-- [ ] MEMORY.md actualizado (se decisão relevante)
-
-## Notas
-
-<!-- Contexto extra, screenshots, decisões tomadas, alternativas consideradas -->
+<!-- Extra context, screenshots, decisions made, alternatives considered -->
