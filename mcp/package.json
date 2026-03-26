@@ -1,7 +1,7 @@
 {
-	"name": "@pulse/mcp",
+	"name": "@glie/pulse-mcp",
 	"version": "0.1.0",
-	"private": true,
+	"private": false,
 	"type": "module",
 	"scripts": {
 		"start": "bun run src/server.ts",
@@ -14,5 +14,11 @@
 	},
 	"devDependencies": {
 		"@types/bun": "^1.2.0"
+	},
+	"license": "Apache-2.0",
+	"homepage": "https://github.com/glieai/pulse-ai#readme",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/glieai/pulse-ai"
 	}
 }

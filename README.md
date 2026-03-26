@@ -39,7 +39,9 @@ curl -fsSL https://raw.githubusercontent.com/glieai/pulse-ai/main/docker-compose
 docker compose up -d
 ```
 
-Pulse is running at `http://localhost:5173` — no login required in solo mode. Pre-built images, no build step.
+Pulse is running at `http://localhost:5173` — no login required in solo mode.
+
+Optionally copy `.env.example` to `.env` to customize settings (default values work out of the box).
 
 ### 2. Connect your tools
 
@@ -117,7 +119,7 @@ docker compose -f docker-compose.dev.yml up -d
 cp .env.example .env
 
 # Run migrations
-cd api && bun run migrate && cd ..
+bun run db:migrate
 
 # Start API (terminal 1)
 cd api && bun run dev

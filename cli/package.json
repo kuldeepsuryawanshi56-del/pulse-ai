@@ -1,6 +1,6 @@
 {
 	"name": "@glie/pulse-cli",
-	"version": "0.1.0",
+	"version": "0.1.10",
 	"description": "Pulse CLI — operational memory for AI coding teams",
 	"type": "module",
 	"bin": {

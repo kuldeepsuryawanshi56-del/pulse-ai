@@ -24,7 +24,7 @@ const envSchema = z.object({
 	// Email (SMTP — Google Workspace relay or similar)
 	SMTP_HOST: z.string().default("smtp-relay.gmail.com"),
 	SMTP_PORT: z.coerce.number().default(587),
-	SMTP_HELO: z.string().default("pulse.glie.ai"),
+	SMTP_HELO: z.string().default("localhost"),
 	EMAIL_FROM: z.string().email().default("noreply@pulse.local"),
 	FRONTEND_URL: z.string().url().default("http://localhost:5173"),
 	// Google OAuth (optional — enables "Sign in with Google")

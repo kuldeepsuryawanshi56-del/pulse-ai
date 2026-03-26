@@ -188,7 +188,7 @@
 		</div>
 	{/if}
 
-	<!-- Fallback: campos extra não reconhecidos por kind -->
+	<!-- Fallback: extra fields not recognized by kind -->
 	{#if extraFields.length > 0}
 		<div class="space-y-3" class:mt-4={knownFields[kind]?.some((k) => k in structured)}>
 			{#each extraFields as [key, value]}

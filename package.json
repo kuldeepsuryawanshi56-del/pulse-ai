@@ -10,7 +10,6 @@
 		"db:up": "docker compose up -d db",
 		"db:down": "docker compose down",
 		"db:migrate": "bun api/src/db/migrate.ts",
-		"db:seed": "bun api/src/db/seed.ts",
 		"lint": "bunx @biomejs/biome check .",
 		"lint:fix": "bunx @biomejs/biome check --write .",
 		"format": "bunx @biomejs/biome format --write .",

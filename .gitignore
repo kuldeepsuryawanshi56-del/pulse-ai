@@ -35,3 +35,4 @@ Thumbs.db
 # Test
 coverage/
 __snapshots__/
+web/build/

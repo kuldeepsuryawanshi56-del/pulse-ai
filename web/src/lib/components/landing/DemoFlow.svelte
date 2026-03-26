@@ -483,7 +483,7 @@
 							<div
 								class="mt-3 flex items-center gap-2 text-xs text-text-secondary"
 							>
-								<span>glieai/pulse</span>
+								<span>glieai/pulse-ai</span>
 								<span>&middot;</span>
 								<span class="text-red-400/70"
 									>Rejected: Session tokens (requires

@@ -106,7 +106,7 @@
 				Pricing
 			</a>
 			<a
-				href="https://github.com/glieai/pulse"
+				href="https://github.com/glieai/pulse-ai"
 				class="text-sm text-text-secondary transition hover:text-text-primary"
 			>
 				GitHub

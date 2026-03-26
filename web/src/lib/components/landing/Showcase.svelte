@@ -400,7 +400,7 @@
 							>
 							<span
 								class="rounded-full bg-bg-hover px-2.5 py-0.5 text-[10px] text-text-secondary/60"
-								>glieai/pulse</span
+								>glieai/pulse-ai</span
 							>
 						</div>
 
