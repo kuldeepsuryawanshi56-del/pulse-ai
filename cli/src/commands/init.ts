@@ -9,6 +9,7 @@ function detectGitRemote(): string | null {
 	try {
 		const remote = execSync("git remote get-url origin", {
 			encoding: "utf-8",
+			stdio: ["pipe", "pipe", "pipe"],
 		}).trim();
 		const match = remote.match(/[/:]([\w.-]+\/[\w.-]+?)(?:\.git)?$/);
 		return match ? (match[1].split("/").pop() ?? null) : null;

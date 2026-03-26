@@ -20,6 +20,7 @@ export function installGitHooks(): boolean {
 	try {
 		const gitDir = execSync("git rev-parse --git-dir", {
 			encoding: "utf-8",
+			stdio: ["pipe", "pipe", "pipe"],
 		}).trim();
 		const hooksDir = `${gitDir}/hooks`;
 		const postCommitPath = `${hooksDir}/post-commit`;
