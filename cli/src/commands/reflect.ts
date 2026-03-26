@@ -1,5 +1,6 @@
 import { hostname } from "node:os";
-import { loadConfig } from "../config";
+import { saveDraft } from "@pulse/shared";
+import { isSoloMode, loadConfig } from "../config";
 import { gatherGitContext } from "../context/git";
 import {
 	getAllActiveSessions,
@@ -10,7 +11,7 @@ import { apiPost } from "../http";
 import { getProviderWithSetup } from "../llm/provider";
 import { resolveLlmConfig } from "../llm/resolve-provider";
 import type { GeneratedInsight, InsightContext } from "../llm/types";
-import { banner, c, info, warn } from "../output";
+import { banner, c, info, success, warn } from "../output";
 import { ask, closePrompt } from "../prompt";
 import { displayInsight, saveInsightDraft } from "./insight-shared";
 
@@ -173,22 +174,35 @@ export async function reflectCommand(args: string[]): Promise<void> {
 		}
 	}
 
-	// Save with session tracking
-	const sessionRefs = [{ session_id: sessionId, device: hostname(), tool: "cli" }];
-
-	try {
-		await saveInsightDraft(
-			config,
-			insight,
-			{
-				branch: context.branch,
-				triggerType: "manual",
-				sessionRefs,
-			},
-			provider,
-		);
-	} catch (err) {
-		throw new Error(`Failed to save draft: ${err instanceof Error ? err.message : "unknown"}`);
+	// Save — local in team mode, server in solo mode
+	if (isSoloMode() || !config.token) {
+		// Solo mode: send to server directly (it's the user's own server)
+		const sessionRefs = [{ session_id: sessionId, device: hostname(), tool: "cli" }];
+		try {
+			await saveInsightDraft(
+				config,
+				insight,
+				{ branch: context.branch, triggerType: "manual", sessionRefs },
+				provider,
+			);
+		} catch (err) {
+			throw new Error(`Failed to save draft: ${err instanceof Error ? err.message : "unknown"}`);
+		}
+	} else {
+		// Team mode: save locally, user publishes via `pulse drafts` or `pulse push`
+		const filePath = saveDraft({
+			kind: insight.kind,
+			title: insight.title,
+			body: insight.body,
+			structured: insight.structured,
+			repo: config.repo || context.repo,
+			branch: context.branch,
+			source_files: insight.sourceFiles,
+			trigger_type: "manual",
+			status: "draft",
+		});
+		success(`Draft saved locally: ${filePath}`);
+		info(`  Review with: ${c.cyan("pulse drafts")}`);
 	}
 
 	closePrompt();

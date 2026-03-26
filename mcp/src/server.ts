@@ -23,6 +23,7 @@ import { PulseApiClient } from "./api-client.js";
 const API_PORT = process.env.API_PORT || "3000";
 const API_URL = process.env.PULSE_API_URL || `http://localhost:${API_PORT}/api`;
 const TOKEN = process.env.PULSE_API_TOKEN || "";
+const MODE = process.env.PULSE_MODE || (TOKEN ? "team" : "solo");
 
 if (!TOKEN) {
 	console.error(
@@ -214,206 +215,213 @@ server.tool(
 );
 
 // ═══════════════════════════════════════════════
-// TOOL: pulse_create
+// TOOLS: write operations (solo mode only)
+// In team mode, writing is done through the CLI/extension
+// with local draft review before publishing.
 // ═══════════════════════════════════════════════
 
-server.tool(
-	"pulse_create",
-	"Record a new insight in the team's knowledge base. " +
-		"Use this when you make a technical decision, discover a dead-end, identify a reusable pattern, complete a milestone, " +
-		"or capture a business requirement/domain constraint that drove a technical choice. " +
-		"Insights are created as drafts and can be published later.",
-	{
-		kind: z
-			.enum(["decision", "dead_end", "pattern", "context", "progress", "business"])
-			.describe(
-				"decision = technical choice with alternatives; " +
-					"dead_end = approach that failed; " +
-					"pattern = reusable knowledge; " +
-					"context = background information; " +
-					"progress = milestone completion; " +
-					"business = real-world problem or domain constraint that drove a technical decision",
-			),
-		title: z
-			.string()
-			.min(1)
-			.max(500)
-			.describe(
-				"Clear, self-contained title (someone should understand the insight from the title alone)",
-			),
-		body: z
-			.string()
-			.min(1)
-			.describe("Full description in markdown. Include reasoning, context, and implications."),
-		repo: z.string().default("pulse").describe("Repository identifier"),
-		branch: z.string().optional().describe("Git branch name"),
-		source_files: z.array(z.string()).optional().describe("Related file paths"),
-		commit_hashes: z
-			.array(z.string())
-			.optional()
-			.describe("Related git commit SHAs (full 40-char)"),
-		structured: z
-			.record(z.unknown())
-			.optional()
-			.describe(
-				"Kind-specific data. " +
-					"decision: { why, alternatives: [{ what, why_rejected }] }. " +
-					"dead_end: { why_failed, time_spent, workaround }. " +
-					"pattern: { applies_to, gotchas }. " +
-					"progress: { milestone, deliverables: [] }. " +
-					"business: { problem, constraints: [], drove_decisions: [] }.",
-			),
-		session_id: z
-			.string()
-			.optional()
-			.describe("Claude Code session identifier for tracking which session produced this insight"),
-		device: z.string().optional().describe("Device/hostname identifier"),
-	},
-	async ({
-		kind,
-		title,
-		body,
-		repo,
-		branch,
-		source_files,
-		commit_hashes,
-		structured,
-		session_id,
-		device,
-	}) => {
-		try {
-			const session_refs = session_id || device ? [{ session_id, device, tool: "mcp" }] : undefined;
+if (MODE === "solo") {
+	server.tool(
+		"pulse_create",
+		"Record a new insight in the team's knowledge base. " +
+			"Use this when you make a technical decision, discover a dead-end, identify a reusable pattern, complete a milestone, " +
+			"or capture a business requirement/domain constraint that drove a technical choice. " +
+			"Insights are created as drafts and can be published later.",
+		{
+			kind: z
+				.enum(["decision", "dead_end", "pattern", "context", "progress", "business"])
+				.describe(
+					"decision = technical choice with alternatives; " +
+						"dead_end = approach that failed; " +
+						"pattern = reusable knowledge; " +
+						"context = background information; " +
+						"progress = milestone completion; " +
+						"business = real-world problem or domain constraint that drove a technical decision",
+				),
+			title: z
+				.string()
+				.min(1)
+				.max(500)
+				.describe(
+					"Clear, self-contained title (someone should understand the insight from the title alone)",
+				),
+			body: z
+				.string()
+				.min(1)
+				.describe("Full description in markdown. Include reasoning, context, and implications."),
+			repo: z.string().default("pulse").describe("Repository identifier"),
+			branch: z.string().optional().describe("Git branch name"),
+			source_files: z.array(z.string()).optional().describe("Related file paths"),
+			commit_hashes: z
+				.array(z.string())
+				.optional()
+				.describe("Related git commit SHAs (full 40-char)"),
+			structured: z
+				.record(z.unknown())
+				.optional()
+				.describe(
+					"Kind-specific data. " +
+						"decision: { why, alternatives: [{ what, why_rejected }] }. " +
+						"dead_end: { why_failed, time_spent, workaround }. " +
+						"pattern: { applies_to, gotchas }. " +
+						"progress: { milestone, deliverables: [] }. " +
+						"business: { problem, constraints: [], drove_decisions: [] }.",
+				),
+			session_id: z
+				.string()
+				.optional()
+				.describe(
+					"Claude Code session identifier for tracking which session produced this insight",
+				),
+			device: z.string().optional().describe("Device/hostname identifier"),
+		},
+		async ({
+			kind,
+			title,
+			body,
+			repo,
+			branch,
+			source_files,
+			commit_hashes,
+			structured,
+			session_id,
+			device,
+		}) => {
+			try {
+				const session_refs =
+					session_id || device ? [{ session_id, device, tool: "mcp" }] : undefined;
 
-			const { insight, created } = await api.create({
-				kind,
-				title,
-				body,
-				repo,
-				branch,
-				source_files,
-				commit_hashes,
-				structured: structured || {},
-				session_refs,
-				trigger_type: "manual",
-				status: "draft",
-			});
+				const { insight, created } = await api.create({
+					kind,
+					title,
+					body,
+					repo,
+					branch,
+					source_files,
+					commit_hashes,
+					structured: structured || {},
+					session_refs,
+					trigger_type: "manual",
+					status: "draft",
+				});
 
-			if (created) {
-				const lines = [
-					"Insight created (draft):",
-					`- ID: ${insight.id}`,
-					`- Kind: ${insight.kind}`,
-					`- Title: ${insight.title}`,
-				];
+				if (created) {
+					const lines = [
+						"Insight created (draft):",
+						`- ID: ${insight.id}`,
+						`- Kind: ${insight.kind}`,
+						`- Title: ${insight.title}`,
+					];
 
-				const hints = (insight as unknown as Record<string, unknown>).hints as
-					| { missing?: string[]; supersedes_id?: string; related_count?: number }
-					| undefined;
-				if (hints?.missing?.length) {
-					lines.push(`\n**Quality hints:** Consider adding: ${hints.missing.join(", ")}`);
+					const hints = (insight as unknown as Record<string, unknown>).hints as
+						| { missing?: string[]; supersedes_id?: string; related_count?: number }
+						| undefined;
+					if (hints?.missing?.length) {
+						lines.push(`\n**Quality hints:** Consider adding: ${hints.missing.join(", ")}`);
+					}
+					if (hints?.related_count && hints.related_count > 0) {
+						lines.push(`**Related insights:** ${hints.related_count} found`);
+					}
+					if (hints?.supersedes_id) {
+						lines.push("**Note:** This may supersede an existing insight");
+					}
+
+					lines.push("\nPublish with: pulse_publish");
+					return textResult(lines.join("\n"));
 				}
-				if (hints?.related_count && hints.related_count > 0) {
-					lines.push(`**Related insights:** ${hints.related_count} found`);
-				}
-				if (hints?.supersedes_id) {
-					lines.push("**Note:** This may supersede an existing insight");
-				}
 
-				lines.push("\nPublish with: pulse_publish");
-				return textResult(lines.join("\n"));
-			}
-
-			return textResult(
-				`Duplicate detected — insight already exists:\n- ID: ${insight.id}\n- Kind: ${insight.kind}\n- Title: ${insight.title}\n- Created: ${insight.created_at}`,
-			);
-		} catch (e) {
-			return errorResult(`Failed to create insight: ${(e as Error).message}`);
-		}
-	},
-);
-
-// ═══════════════════════════════════════════════
-// TOOL: pulse_generate
-// ═══════════════════════════════════════════════
-
-server.tool(
-	"pulse_generate",
-	"Generate an insight from raw unstructured data (conversation, email, meeting notes) using server-side LLM. " +
-		"Use this when you receive content from external sources that should be analyzed for insights. " +
-		"Requires LLM to be configured on the Pulse API server.",
-	{
-		raw_data: z
-			.string()
-			.min(1)
-			.describe(
-				"Raw content to analyze (conversation transcript, email thread, meeting notes, etc.)",
-			),
-		source_type: z
-			.string()
-			.min(1)
-			.describe("Source type (e.g. 'whatsapp', 'email', 'slack', 'meeting', 'custom')"),
-		source_name: z
-			.string()
-			.optional()
-			.describe("Human-readable source identifier (e.g. 'Client Project Group', thread subject)"),
-		repo: z.string().default("pulse").describe("Repository this content relates to"),
-		branch: z.string().optional().describe("Git branch name"),
-		auto_approve: z
-			.boolean()
-			.default(false)
-			.describe("If true, publish immediately instead of saving as draft"),
-	},
-	async ({ raw_data, source_type, source_name, repo, branch, auto_approve }) => {
-		try {
-			const { insight, created } = await api.generate({
-				raw_data,
-				source_type,
-				source_name,
-				repo,
-				branch,
-				auto_approve,
-			});
-
-			const status = insight.status === "published" ? "published" : "draft";
-
-			if (created) {
 				return textResult(
-					`Insight generated (${status}):\n- ID: ${insight.id}\n- Kind: ${insight.kind}\n- Title: ${insight.title}\n- Body: ${insight.body.slice(0, 200)}...${status === "draft" ? "\n\nPublish with: pulse_publish" : ""}`,
+					`Duplicate detected — insight already exists:\n- ID: ${insight.id}\n- Kind: ${insight.kind}\n- Title: ${insight.title}\n- Created: ${insight.created_at}`,
 				);
+			} catch (e) {
+				return errorResult(`Failed to create insight: ${(e as Error).message}`);
 			}
+		},
+	);
 
-			return textResult(
-				`Duplicate detected — insight already exists:\n- ID: ${insight.id}\n- Title: ${insight.title}`,
-			);
-		} catch (e) {
-			return errorResult(`Generate failed: ${(e as Error).message}`);
-		}
-	},
-);
+	// ═══════════════════════════════════════════════
+	// TOOL: pulse_generate
+	// ═══════════════════════════════════════════════
 
-// ═══════════════════════════════════════════════
-// TOOL: pulse_publish
-// ═══════════════════════════════════════════════
+	server.tool(
+		"pulse_generate",
+		"Generate an insight from raw unstructured data (conversation, email, meeting notes) using server-side LLM. " +
+			"Use this when you receive content from external sources that should be analyzed for insights. " +
+			"Requires LLM to be configured on the Pulse API server.",
+		{
+			raw_data: z
+				.string()
+				.min(1)
+				.describe(
+					"Raw content to analyze (conversation transcript, email thread, meeting notes, etc.)",
+				),
+			source_type: z
+				.string()
+				.min(1)
+				.describe("Source type (e.g. 'whatsapp', 'email', 'slack', 'meeting', 'custom')"),
+			source_name: z
+				.string()
+				.optional()
+				.describe("Human-readable source identifier (e.g. 'Client Project Group', thread subject)"),
+			repo: z.string().default("pulse").describe("Repository this content relates to"),
+			branch: z.string().optional().describe("Git branch name"),
+			auto_approve: z
+				.boolean()
+				.default(false)
+				.describe("If true, publish immediately instead of saving as draft"),
+		},
+		async ({ raw_data, source_type, source_name, repo, branch, auto_approve }) => {
+			try {
+				const { insight, created } = await api.generate({
+					raw_data,
+					source_type,
+					source_name,
+					repo,
+					branch,
+					auto_approve,
+				});
 
-server.tool(
-	"pulse_publish",
-	"Publish all draft insights for a repository. Published insights become searchable and available to the whole team.",
-	{
-		repo: z.string().default("pulse").describe("Repository to publish drafts for"),
-	},
-	async ({ repo }) => {
-		try {
-			const res = await api.publish(repo);
-			if (res.count === 0) {
-				return textResult("No draft insights to publish.");
+				const status = insight.status === "published" ? "published" : "draft";
+
+				if (created) {
+					return textResult(
+						`Insight generated (${status}):\n- ID: ${insight.id}\n- Kind: ${insight.kind}\n- Title: ${insight.title}\n- Body: ${insight.body.slice(0, 200)}...${status === "draft" ? "\n\nPublish with: pulse_publish" : ""}`,
+					);
+				}
+
+				return textResult(
+					`Duplicate detected — insight already exists:\n- ID: ${insight.id}\n- Title: ${insight.title}`,
+				);
+			} catch (e) {
+				return errorResult(`Generate failed: ${(e as Error).message}`);
 			}
-			const titles = res.published.map((i) => `  - [${i.kind}] ${i.title}`).join("\n");
-			return textResult(`Published ${res.count} insights:\n${titles}`);
-		} catch (e) {
-			return errorResult(`Publish failed: ${(e as Error).message}`);
-		}
-	},
-);
+		},
+	);
+
+	// ═══════════════════════════════════════════════
+	// TOOL: pulse_publish
+	// ═══════════════════════════════════════════════
+
+	server.tool(
+		"pulse_publish",
+		"Publish all draft insights for a repository. Published insights become searchable and available to the whole team.",
+		{
+			repo: z.string().default("pulse").describe("Repository to publish drafts for"),
+		},
+		async ({ repo }) => {
+			try {
+				const res = await api.publish(repo);
+				if (res.count === 0) {
+					return textResult("No draft insights to publish.");
+				}
+				const titles = res.published.map((i) => `  - [${i.kind}] ${i.title}`).join("\n");
+				return textResult(`Published ${res.count} insights:\n${titles}`);
+			} catch (e) {
+				return errorResult(`Publish failed: ${(e as Error).message}`);
+			}
+		},
+	);
+} // end solo-only tools
 
 // ═══════════════════════════════════════════════
 // TOOL: pulse_summary

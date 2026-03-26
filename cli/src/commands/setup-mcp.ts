@@ -62,6 +62,7 @@ function setupClaudeCode(normalizedUrl: string, token: string): boolean {
 	} catch {}
 
 	// Add with user scope (global, all projects)
+	const mode = token ? "team" : "solo";
 	execSync(
 		[
 			JSON.stringify(claude),
@@ -76,6 +77,8 @@ function setupClaudeCode(normalizedUrl: string, token: string): boolean {
 			`PULSE_API_URL=${normalizedUrl}`,
 			"-e",
 			`PULSE_API_TOKEN=${token}`,
+			"-e",
+			`PULSE_MODE=${mode}`,
 			"--",
 			"npx",
 			"-y",
@@ -155,6 +158,7 @@ export function setupGlobalMcp(apiUrl: string, token: string): boolean {
 export function ensureLocalMcp(cwd: string, apiUrl: string, token: string): void {
 	const normalizedUrl = normalizeApiUrl(apiUrl);
 	const mcpPath = join(cwd, ".mcp.json");
+	const mode = token ? "team" : "solo";
 
 	const mcpConfig = {
 		mcpServers: {
@@ -165,6 +169,7 @@ export function ensureLocalMcp(cwd: string, apiUrl: string, token: string): void
 				env: {
 					PULSE_API_URL: normalizedUrl,
 					PULSE_API_TOKEN: token,
+					PULSE_MODE: mode,
 				},
 			},
 		},

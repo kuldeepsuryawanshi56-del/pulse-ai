@@ -13,6 +13,7 @@ const commands: Record<
 	insight: () => import("./commands/insight"),
 	generate: () => import("./commands/insight"), // backward compat (git hooks)
 	reflect: () => import("./commands/reflect"),
+	drafts: () => import("./commands/drafts"),
 	push: () => import("./commands/push"),
 	watch: () => import("./commands/watch"),
 	config: () => import("./commands/config"),
