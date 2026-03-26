@@ -1,5 +1,5 @@
 import { execSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { c, error, info, success, warn } from "../output";
@@ -29,7 +29,7 @@ function findClaudeBinary(): string | null {
 	for (const dir of searchDirs) {
 		try {
 			if (!existsSync(dir)) continue;
-			for (const entry of require("node:fs").readdirSync(dir)) {
+			for (const entry of readdirSync(dir)) {
 				if (entry.startsWith("anthropic.claude-code")) {
 					const bin = join(dir, entry, "resources", "native-binary", "claude");
 					if (existsSync(bin)) return bin;
