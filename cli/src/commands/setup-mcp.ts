@@ -185,12 +185,22 @@ export function ensureLocalMcp(cwd: string, apiUrl: string, token: string): void
 
 /** Standalone command for setting up MCP integration */
 export default async function setupMcpCommand(args: string[]): Promise<void> {
-	const apiUrl = args[0];
-	const token = args[1];
+	let apiUrl = args[0];
+	let token = args[1];
+
+	// Read from ~/.pulse/config.json if no args provided
+	if (!apiUrl || !token) {
+		try {
+			const configPath = join(homedir(), ".pulse", "config.json");
+			const raw = readFileSync(configPath, "utf-8");
+			const config = JSON.parse(raw);
+			if (!apiUrl) apiUrl = config.apiUrl;
+			if (!token) token = config.token;
+		} catch {}
+	}
 
 	if (!apiUrl || !token) {
-		error("Usage: pulse setup-mcp <api-url> <token>");
-		info("  Or run 'pulse init' for full interactive setup");
+		error("No config found. Run 'pulse init' first, or pass: pulse setup-mcp <api-url> <token>");
 		process.exit(1);
 	}
 
@@ -203,5 +213,5 @@ export default async function setupMcpCommand(args: string[]): Promise<void> {
 	// Also create local .mcp.json in current directory
 	const cwd = process.cwd();
 	ensureLocalMcp(cwd, apiUrl, token);
-	success(`Local .mcp.json created in ${cwd}`);
+	success("Local .mcp.json created");
 }
