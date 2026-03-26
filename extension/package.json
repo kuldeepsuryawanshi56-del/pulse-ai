@@ -3,7 +3,7 @@
 	"displayName": "Pulse AI",
 	"publisher": "glie",
 	"description": "Operational memory for vibe coding teams — capture decisions, dead-ends and patterns from AI coding sessions automatically.",
-	"version": "0.1.24",
+	"version": "0.1.25",
 	"license": "SEE LICENSE IN LICENSE",
 	"repository": {
 		"type": "git",
@@ -103,6 +103,15 @@
 				"icon": "$(trash)"
 			},
 			{
+				"command": "pulse.publishDraft",
+				"title": "Pulse: Publish Draft",
+				"icon": "$(cloud-upload)"
+			},
+			{
+				"command": "pulse.openDraft",
+				"title": "Pulse: Open Draft"
+			},
+			{
 				"command": "pulse.configure",
 				"title": "Pulse: Configure"
 			},
@@ -181,9 +190,14 @@
 			],
 			"view/item/context": [
 				{
+					"command": "pulse.publishDraft",
+					"when": "view == pulse.drafts && viewItem == draft",
+					"group": "inline@1"
+				},
+				{
 					"command": "pulse.deleteDraft",
-					"when": "view == pulse.drafts",
-					"group": "inline"
+					"when": "view == pulse.drafts && viewItem == draft",
+					"group": "inline@2"
 				}
 			]
 		},

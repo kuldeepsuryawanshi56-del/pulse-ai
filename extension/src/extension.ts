@@ -169,6 +169,49 @@ export function activate(context: vscode.ExtensionContext): void {
 		}),
 	);
 
+	// Open draft in webview detail panel
+	context.subscriptions.push(
+		vscode.commands.registerCommand("pulse.openDraft", (draft: LocalDraft) => {
+			if (!draft?.data) return;
+			const d = draft.data;
+			// Convert LocalDraft to Insight-like shape for the detail panel
+			const insightLike = {
+				id: draft.filename,
+				kind: d.kind,
+				title: d.title,
+				body: d.body,
+				structured: d.structured || {},
+				repo: d.repo || "",
+				branch: d.branch || "",
+				source_files: d.source_files || [],
+				created_at: draft.createdAt,
+				status: "draft" as const,
+			};
+			// Lazy import to avoid circular deps
+			import("./views/detail-panel").then(({ showInsightDetail }) =>
+				showInsightDetail(insightLike as never),
+			);
+		}),
+	);
+
+	// Publish a single draft
+	context.subscriptions.push(
+		vscode.commands.registerCommand("pulse.publishDraft", async (item: { draft: LocalDraft }) => {
+			if (!item?.draft || !client) return;
+			try {
+				const d = item.draft.data;
+				await client.createInsight({ ...d, status: "published" });
+				deleteDraft(item.draft.filePath);
+				draftsTree?.refresh();
+				recentTree?.refresh();
+				vscode.window.showInformationMessage(`Pulse: Published "${d.title}"`);
+			} catch (err) {
+				const msg = err instanceof Error ? err.message : "unknown";
+				vscode.window.showErrorMessage(`Pulse: Publish failed — ${msg}`);
+			}
+		}),
+	);
+
 	context.subscriptions.push(registerOpenInsightCommand(client));
 	context.subscriptions.push(registerInsightCommand(client, config, draftsTree));
 	context.subscriptions.push(registerPushCommand(client, config, draftsTree, recentTree));
